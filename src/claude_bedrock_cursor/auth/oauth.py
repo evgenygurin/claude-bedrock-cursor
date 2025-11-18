@@ -1,6 +1,6 @@
 """OAuth2 authentication manager with refresh token rotation."""
 
-import subprocess
+import subprocess  # nosec B404 - Used safely to call claude CLI command
 import time
 from collections.abc import Callable
 from contextlib import suppress
@@ -54,7 +54,7 @@ class OAuthManager:
     REFRESH_TOKEN_LIFETIME = 604800  # 7 days
 
     # API endpoints (placeholder - update with actual endpoints)
-    TOKEN_ENDPOINT = "https://api.anthropic.com/v1/oauth/token"
+    TOKEN_ENDPOINT = "https://api.anthropic.com/v1/oauth/token"  # nosec B105 - Not a password, API endpoint URL
     REVOKE_ENDPOINT = "https://api.anthropic.com/v1/oauth/revoke"
 
     def __init__(self) -> None:
@@ -232,7 +232,7 @@ class OAuthManager:
         """
         try:
             # Run claude setup-token command
-            result = subprocess.run(
+            result = subprocess.run(  # nosec B603 B607 - Safe: calling trusted claude CLI with fixed args
                 ["claude", "setup-token"],
                 capture_output=True,
                 text=True,
