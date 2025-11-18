@@ -1,6 +1,5 @@
 """Unit tests for configuration management."""
 
-import os
 from pathlib import Path
 
 import pytest
@@ -117,7 +116,9 @@ class TestConfig:
         assert isinstance(config_dir, Path)
         assert config_dir.name == ".claude-bedrock"
 
-    def test_config_ensure_config_dir_exists(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    def test_config_ensure_config_dir_exists(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ):
         """Test ensuring config directory is created.
 
         Args:

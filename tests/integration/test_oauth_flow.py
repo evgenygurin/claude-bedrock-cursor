@@ -1,6 +1,6 @@
 """Integration tests for OAuth authentication flow."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -44,7 +44,9 @@ class TestOAuthFlowIntegration:
 
         # Verify tokens stored in keyring
         assert mock_keyring["claude-bedrock-cursor:access_token"] == "test_access_token"
-        assert mock_keyring["claude-bedrock-cursor:refresh_token"] == "test_refresh_token"
+        assert (
+            mock_keyring["claude-bedrock-cursor:refresh_token"] == "test_refresh_token"
+        )
 
         # Verify authentication status
         assert manager.is_authenticated()
@@ -89,8 +91,13 @@ class TestOAuthFlowIntegration:
         assert refresh_pair.refresh_token != initial_refresh_token
 
         # Verify new tokens in storage
-        assert mock_keyring["claude-bedrock-cursor:access_token"] == "refreshed_access_token"
-        assert mock_keyring["claude-bedrock-cursor:refresh_token"] == "new_refresh_token"
+        assert (
+            mock_keyring["claude-bedrock-cursor:access_token"]
+            == "refreshed_access_token"
+        )
+        assert (
+            mock_keyring["claude-bedrock-cursor:refresh_token"] == "new_refresh_token"
+        )
 
     @pytest.mark.asyncio
     async def test_multiple_refresh_cycles(
@@ -175,8 +182,12 @@ class TestOAuthFlowIntegration:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "valid_refresh"
 
         # Set expiry to past
-        past_timestamp = int((datetime.now(timezone.utc) - timedelta(minutes=5)).timestamp())
-        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(past_timestamp)
+        past_timestamp = int(
+            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
+        )
+        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
+            past_timestamp
+        )
 
         # Setup refresh response
         mock_httpx_client.post.return_value.json.return_value = {
@@ -229,12 +240,16 @@ class TestOAuthErrorScenarios:
         """
         # Simulate invalid OAuth token
         mock_httpx_client.post.return_value.status_code = 401
-        mock_httpx_client.post.return_value.json.return_value = {"error": "invalid_grant"}
+        mock_httpx_client.post.return_value.json.return_value = {
+            "error": "invalid_grant"
+        }
 
         manager = OAuthManager()
 
         with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(AuthenticationError, match="Failed to exchange OAuth token"):
+            with pytest.raises(
+                AuthenticationError, match="Failed to exchange OAuth token"
+            ):
                 await manager._exchange_oauth_token("invalid_token")
 
     @pytest.mark.asyncio
@@ -264,12 +279,16 @@ class TestOAuthErrorScenarios:
 
         # Simulate refresh failure
         mock_httpx_client.post.return_value.status_code = 401
-        mock_httpx_client.post.return_value.json.return_value = {"error": "invalid_token"}
+        mock_httpx_client.post.return_value.json.return_value = {
+            "error": "invalid_token"
+        }
 
         manager = OAuthManager()
 
         with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(TokenRefreshError, match="Failed to refresh access token"):
+            with pytest.raises(
+                TokenRefreshError, match="Failed to refresh access token"
+            ):
                 await manager.refresh_access_token()
 
     @pytest.mark.asyncio
@@ -378,7 +397,7 @@ class TestOAuthSecurity:
             pair = await manager.refresh_access_token()
 
         # Verify expiry is approximately 10 minutes from now
-        expected = datetime.now(timezone.utc) + timedelta(seconds=600)
+        expected = datetime.now(UTC) + timedelta(seconds=600)
         diff = abs((pair.expires_at - expected).total_seconds())
 
         assert diff < 5  # Allow 5 seconds tolerance
@@ -398,4 +417,4 @@ class TestOAuthSecurity:
         assert "other-app:access_token" not in mock_keyring
 
         # Verify correct service name used
-        assert all(k.startswith("claude-bedrock-cursor:") for k in mock_keyring.keys())
+        assert all(k.startswith("claude-bedrock-cursor:") for k in mock_keyring)

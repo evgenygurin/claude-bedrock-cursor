@@ -1,7 +1,6 @@
 """Unit tests for OAuth authentication manager."""
 
-import time
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -18,14 +17,16 @@ from claude_bedrock_cursor.utils.errors import (
 class TestTokenPair:
     """Test suite for TokenPair class."""
 
-    def test_token_pair_creation(self, sample_access_token: str, sample_refresh_token: str):
+    def test_token_pair_creation(
+        self, sample_access_token: str, sample_refresh_token: str
+    ):
         """Test creating TokenPair instance.
 
         Args:
             sample_access_token: Sample access token fixture
             sample_refresh_token: Sample refresh token fixture
         """
-        expires_at = datetime.now(timezone.utc) + timedelta(minutes=5)
+        expires_at = datetime.now(UTC) + timedelta(minutes=5)
         pair = TokenPair(
             access_token=sample_access_token,
             refresh_token=sample_refresh_token,
@@ -39,29 +40,29 @@ class TestTokenPair:
     def test_token_pair_is_expired(self):
         """Test checking if token pair is expired."""
         # Not expired (5 minutes from now)
-        future = datetime.now(timezone.utc) + timedelta(minutes=5)
+        future = datetime.now(UTC) + timedelta(minutes=5)
         pair = TokenPair(access_token="test", refresh_token="test", expires_at=future)
         assert not pair.is_expired()
 
         # Expired (5 minutes ago)
-        past = datetime.now(timezone.utc) - timedelta(minutes=5)
+        past = datetime.now(UTC) - timedelta(minutes=5)
         pair = TokenPair(access_token="test", refresh_token="test", expires_at=past)
         assert pair.is_expired()
 
     def test_token_pair_needs_refresh(self):
         """Test checking if token needs refresh (within 1 minute of expiry)."""
         # Doesn't need refresh (5 minutes remaining)
-        future = datetime.now(timezone.utc) + timedelta(minutes=5)
+        future = datetime.now(UTC) + timedelta(minutes=5)
         pair = TokenPair(access_token="test", refresh_token="test", expires_at=future)
         assert not pair.needs_refresh()
 
         # Needs refresh (30 seconds remaining)
-        soon = datetime.now(timezone.utc) + timedelta(seconds=30)
+        soon = datetime.now(UTC) + timedelta(seconds=30)
         pair = TokenPair(access_token="test", refresh_token="test", expires_at=soon)
         assert pair.needs_refresh()
 
         # Already expired
-        past = datetime.now(timezone.utc) - timedelta(minutes=1)
+        past = datetime.now(UTC) - timedelta(minutes=1)
         pair = TokenPair(access_token="test", refresh_token="test", expires_at=past)
         assert pair.needs_refresh()
 
@@ -135,12 +136,16 @@ class TestOAuthManager:
             mock_keyring: Mocked keyring fixture
         """
         mock_httpx_client.post.return_value.status_code = 401
-        mock_httpx_client.post.return_value.json.return_value = {"error": "invalid_token"}
+        mock_httpx_client.post.return_value.json.return_value = {
+            "error": "invalid_token"
+        }
 
         manager = OAuthManager()
 
         with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(AuthenticationError, match="Failed to exchange OAuth token"):
+            with pytest.raises(
+                AuthenticationError, match="Failed to exchange OAuth token"
+            ):
                 await manager._exchange_oauth_token("invalid_oauth_token")
 
     @pytest.mark.asyncio
@@ -167,7 +172,9 @@ class TestOAuthManager:
 
         # Verify tokens were stored
         assert mock_keyring["claude-bedrock-cursor:access_token"] == "test_access_token"
-        assert mock_keyring["claude-bedrock-cursor:refresh_token"] == "test_refresh_token"
+        assert (
+            mock_keyring["claude-bedrock-cursor:refresh_token"] == "test_refresh_token"
+        )
 
     @pytest.mark.asyncio
     async def test_refresh_access_token(
@@ -200,7 +207,9 @@ class TestOAuthManager:
 
         # Verify tokens were updated in storage
         assert mock_keyring["claude-bedrock-cursor:access_token"] == "new_access_token"
-        assert mock_keyring["claude-bedrock-cursor:refresh_token"] == "new_refresh_token"
+        assert (
+            mock_keyring["claude-bedrock-cursor:refresh_token"] == "new_refresh_token"
+        )
 
     @pytest.mark.asyncio
     async def test_refresh_token_not_found(self, mock_keyring: dict[str, str]):
@@ -230,7 +239,9 @@ class TestOAuthManager:
         manager = OAuthManager()
 
         with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(TokenRefreshError, match="Failed to refresh access token"):
+            with pytest.raises(
+                TokenRefreshError, match="Failed to refresh access token"
+            ):
                 await manager.refresh_access_token()
 
     @pytest.mark.asyncio
@@ -284,8 +295,12 @@ class TestOAuthManager:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "test_refresh"
 
         # Store expiry timestamp (5 minutes from now)
-        future_timestamp = int((datetime.now(timezone.utc) + timedelta(minutes=5)).timestamp())
-        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(future_timestamp)
+        future_timestamp = int(
+            (datetime.now(UTC) + timedelta(minutes=5)).timestamp()
+        )
+        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
+            future_timestamp
+        )
 
         manager = OAuthManager()
         token = await manager.get_valid_access_token()
@@ -294,7 +309,10 @@ class TestOAuthManager:
 
     @pytest.mark.asyncio
     async def test_get_valid_access_token_auto_refresh(
-        self, mock_httpx_client: AsyncMock, mock_keyring: dict[str, str], sample_access_token: str
+        self,
+        mock_httpx_client: AsyncMock,
+        mock_keyring: dict[str, str],
+        sample_access_token: str,
     ):
         """Test auto-refresh when access token expired.
 
@@ -308,8 +326,12 @@ class TestOAuthManager:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "test_refresh"
 
         # Store past expiry timestamp
-        past_timestamp = int((datetime.now(timezone.utc) - timedelta(minutes=5)).timestamp())
-        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(past_timestamp)
+        past_timestamp = int(
+            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
+        )
+        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
+            past_timestamp
+        )
 
         manager = OAuthManager()
 
@@ -368,7 +390,7 @@ class TestOAuthManager:
         expires_at = manager._calculate_expiry(300)
 
         # Should be approximately 5 minutes from now
-        expected = datetime.now(timezone.utc) + timedelta(seconds=300)
+        expected = datetime.now(UTC) + timedelta(seconds=300)
         diff = abs((expires_at - expected).total_seconds())
 
         assert diff < 2  # Allow 2 seconds tolerance

@@ -20,13 +20,13 @@ __version__ = "1.0.0"
 __author__ = "Claude Code Team"
 __license__ = "MIT"
 
-from claude_bedrock_cursor.bedrock.client import BedrockClient
 from claude_bedrock_cursor.auth.oauth import OAuthManager
+from claude_bedrock_cursor.bedrock.client import BedrockClient
 from claude_bedrock_cursor.config import Config
 
 __all__ = [
     "BedrockClient",
-    "OAuthManager",
     "Config",
+    "OAuthManager",
     "__version__",
 ]

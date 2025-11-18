@@ -1,19 +1,19 @@
 """Custom exception classes for claude-bedrock-cursor."""
 
 
-class ClaudeBedrock Error(Exception):
+class ClaudeBedrockError(Exception):
     """Base exception for all claude-bedrock-cursor errors."""
 
     pass
 
 
-class ConfigError(ClaudeBedrock Error):
+class ConfigError(ClaudeBedrockError):
     """Configuration-related errors."""
 
     pass
 
 
-class AuthenticationError(ClaudeBedrock Error):
+class AuthenticationError(ClaudeBedrockError):
     """Authentication-related errors."""
 
     pass
@@ -31,7 +31,7 @@ class TokenRefreshError(AuthenticationError):
     pass
 
 
-class BedrockError(ClaudeBedrock Error):
+class BedrockError(ClaudeBedrockError):
     """AWS Bedrock-related errors."""
 
     pass
@@ -55,13 +55,13 @@ class BedrockValidationError(BedrockError):
     pass
 
 
-class CursorIntegrationError(ClaudeBedrock Error):
+class CursorIntegrationError(ClaudeBedrockError):
     """Cursor IDE integration errors."""
 
     pass
 
 
-class IAMPolicyError(ClaudeBedrock Error):
+class IAMPolicyError(ClaudeBedrockError):
     """IAM policy-related errors."""
 
     pass

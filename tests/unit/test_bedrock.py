@@ -1,8 +1,7 @@
 """Unit tests for AWS Bedrock client."""
 
-import asyncio
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 from botocore.exceptions import ClientError
@@ -109,7 +108,8 @@ class TestBedrockClient:
         """
         # First call raises throttling error, second succeeds
         throttle_error = ClientError(
-            error_response={"Error": {"Code": "ThrottlingException"}}, operation_name="InvokeModel"
+            error_response={"Error": {"Code": "ThrottlingException"}},
+            operation_name="InvokeModel",
         )
 
         call_count = 0
@@ -145,7 +145,8 @@ class TestBedrockClient:
         """
         # Always raise throttling error
         throttle_error = ClientError(
-            error_response={"Error": {"Code": "ThrottlingException"}}, operation_name="InvokeModel"
+            error_response={"Error": {"Code": "ThrottlingException"}},
+            operation_name="InvokeModel",
         )
         mock_boto3_client.invoke_model_with_response_stream.side_effect = throttle_error
 
@@ -166,9 +167,12 @@ class TestBedrockClient:
             sample_config: Sample config fixture
         """
         validation_error = ClientError(
-            error_response={"Error": {"Code": "ValidationException"}}, operation_name="InvokeModel"
+            error_response={"Error": {"Code": "ValidationException"}},
+            operation_name="InvokeModel",
         )
-        mock_boto3_client.invoke_model_with_response_stream.side_effect = validation_error
+        mock_boto3_client.invoke_model_with_response_stream.side_effect = (
+            validation_error
+        )
 
         client = BedrockClient(config=sample_config)
 
@@ -187,7 +191,8 @@ class TestBedrockClient:
             sample_config: Sample config fixture
         """
         generic_error = ClientError(
-            error_response={"Error": {"Code": "InternalServerError"}}, operation_name="InvokeModel"
+            error_response={"Error": {"Code": "InternalServerError"}},
+            operation_name="InvokeModel",
         )
         mock_boto3_client.invoke_model_with_response_stream.side_effect = generic_error
 
@@ -231,7 +236,9 @@ class TestBedrockClient:
         assert len(body["messages"]) == 1
 
     @pytest.mark.asyncio
-    async def test_stream_response_parsing(self, mock_boto3_client: MagicMock, sample_config: Config):
+    async def test_stream_response_parsing(
+        self, mock_boto3_client: MagicMock, sample_config: Config
+    ):
         """Test streaming response parsing.
 
         Args:
@@ -247,7 +254,9 @@ class TestBedrockClient:
         assert chunks == ["Hello", " World"]
 
     @pytest.mark.asyncio
-    async def test_empty_response_stream(self, mock_boto3_client: MagicMock, sample_config: Config):
+    async def test_empty_response_stream(
+        self, mock_boto3_client: MagicMock, sample_config: Config
+    ):
         """Test handling empty response stream.
 
         Args:
@@ -255,7 +264,9 @@ class TestBedrockClient:
             sample_config: Sample config fixture
         """
         # Mock empty stream
-        mock_boto3_client.invoke_model_with_response_stream.return_value = {"body": iter([])}
+        mock_boto3_client.invoke_model_with_response_stream.return_value = {
+            "body": iter([])
+        }
 
         client = BedrockClient(config=sample_config)
 
@@ -294,7 +305,9 @@ class TestBedrockClientWithMetrics:
     """Test suite for BedrockClientWithMetrics class."""
 
     @pytest.mark.asyncio
-    async def test_metrics_tracking(self, mock_boto3_client: MagicMock, sample_config: Config):
+    async def test_metrics_tracking(
+        self, mock_boto3_client: MagicMock, sample_config: Config
+    ):
         """Test metrics are tracked during invocation.
 
         Args:
@@ -328,7 +341,8 @@ class TestBedrockClientWithMetrics:
             sample_config: Sample config fixture
         """
         error = ClientError(
-            error_response={"Error": {"Code": "ValidationException"}}, operation_name="InvokeModel"
+            error_response={"Error": {"Code": "ValidationException"}},
+            operation_name="InvokeModel",
         )
         mock_boto3_client.invoke_model_with_response_stream.side_effect = error
 
@@ -345,7 +359,9 @@ class TestBedrockClientWithMetrics:
         assert metrics["failed_requests"] == 1
 
     @pytest.mark.asyncio
-    async def test_metrics_token_tracking(self, mock_boto3_client: MagicMock, sample_config: Config):
+    async def test_metrics_token_tracking(
+        self, mock_boto3_client: MagicMock, sample_config: Config
+    ):
         """Test token usage metrics.
 
         Args:
@@ -366,7 +382,9 @@ class TestBedrockClientWithMetrics:
             },
             {"chunk": {"bytes": b'{"type":"message_stop"}'}},
         ]
-        mock_boto3_client.invoke_model_with_response_stream.return_value = {"body": iter(mock_stream)}
+        mock_boto3_client.invoke_model_with_response_stream.return_value = {
+            "body": iter(mock_stream)
+        }
 
         client = BedrockClientWithMetrics(config=sample_config)
 

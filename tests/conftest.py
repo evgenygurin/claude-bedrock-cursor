@@ -1,8 +1,7 @@
 """Pytest configuration and shared fixtures."""
 
-import os
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -208,7 +207,12 @@ def clean_environment(monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch: Pytest monkeypatch fixture
     """
     # Remove AWS environment variables
-    for var in ["AWS_REGION", "AWS_PROFILE", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]:
+    for var in [
+        "AWS_REGION",
+        "AWS_PROFILE",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+    ]:
         monkeypatch.delenv(var, raising=False)
 
     # Remove application environment variables

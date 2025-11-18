@@ -1,29 +1,29 @@
 """Utility modules for claude-bedrock-cursor."""
 
 from claude_bedrock_cursor.utils.errors import (
-    ClaudeBedrock Error,
-    ConfigError,
     AuthenticationError,
-    NotAuthenticatedError,
-    TokenRefreshError,
-    BedrockError,
     BedrockConnectionError,
+    BedrockError,
     BedrockThrottlingError,
     BedrockValidationError,
+    ClaudeBedrockError,
+    ConfigError,
     CursorIntegrationError,
     IAMPolicyError,
+    NotAuthenticatedError,
+    TokenRefreshError,
 )
 
 __all__ = [
-    "ClaudeBedrock Error",
-    "ConfigError",
     "AuthenticationError",
-    "NotAuthenticatedError",
-    "TokenRefreshError",
-    "BedrockError",
     "BedrockConnectionError",
+    "BedrockError",
     "BedrockThrottlingError",
     "BedrockValidationError",
+    "ClaudeBedrockError",
+    "ConfigError",
     "CursorIntegrationError",
     "IAMPolicyError",
+    "NotAuthenticatedError",
+    "TokenRefreshError",
 ]

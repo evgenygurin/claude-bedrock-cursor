@@ -1,18 +1,16 @@
 """OAuth2 authentication manager with refresh token rotation."""
 
-import asyncio
 import subprocess
 import time
 from dataclasses import dataclass
-from typing import Optional
 
 import httpx
 
 from claude_bedrock_cursor.auth.storage import SecureTokenStorage
 from claude_bedrock_cursor.utils.errors import (
+    AuthenticationError,
     NotAuthenticatedError,
     TokenRefreshError,
-    AuthenticationError,
 )
 
 
@@ -133,9 +131,7 @@ class OAuthManager:
                 raise NotAuthenticatedError(
                     "Refresh token expired. Please run: claude-bedrock auth login"
                 ) from e
-            raise TokenRefreshError(
-                f"Token refresh failed: {e.response.text}"
-            ) from e
+            raise TokenRefreshError(f"Token refresh failed: {e.response.text}") from e
 
         except httpx.HTTPError as e:
             raise TokenRefreshError(f"Token refresh failed: {e}") from e
@@ -258,9 +254,7 @@ class OAuthManager:
             )
 
         except subprocess.TimeoutExpired as e:
-            raise AuthenticationError(
-                "OAuth token generation timed out"
-            ) from e
+            raise AuthenticationError("OAuth token generation timed out") from e
 
         except FileNotFoundError as e:
             raise AuthenticationError(
@@ -295,9 +289,7 @@ class OAuthManager:
             ) from e
 
         except httpx.HTTPError as e:
-            raise AuthenticationError(
-                f"OAuth token exchange failed: {e}"
-            ) from e
+            raise AuthenticationError(f"OAuth token exchange failed: {e}") from e
 
         data = response.json()
 
@@ -317,8 +309,9 @@ class OAuthManager:
 
 
 # Decorator for automatic token refresh
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable
+from typing import Any
 
 
 def requires_auth(func: Callable) -> Callable:

@@ -35,7 +35,9 @@ class TestCLIInit:
         assert config_dir.exists()
         assert (config_dir / "config.toml").exists()
 
-    def test_init_with_custom_region(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    def test_init_with_custom_region(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ):
         """Test init with custom AWS region.
 
         Args:
@@ -53,7 +55,9 @@ class TestCLIInit:
         config = Config.from_toml(config_file)
         assert config.aws_region == "eu-west-1"
 
-    def test_init_already_initialized(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    def test_init_already_initialized(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ):
         """Test init when already initialized.
 
         Args:
@@ -76,7 +80,9 @@ class TestCLIInit:
 class TestCLIStatus:
     """Test suite for 'claude-bedrock status' command."""
 
-    def test_status_not_configured(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    def test_status_not_configured(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ):
         """Test status when not configured.
 
         Args:
@@ -88,10 +94,16 @@ class TestCLIStatus:
         result = runner.invoke(app, ["status"])
 
         assert result.exit_code == 0
-        assert "Not configured" in result.stdout or "not initialized" in result.stdout.lower()
+        assert (
+            "Not configured" in result.stdout
+            or "not initialized" in result.stdout.lower()
+        )
 
     def test_status_configured(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_keyring: dict[str, str]
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_keyring: dict[str, str],
     ):
         """Test status when configured.
 
@@ -112,7 +124,9 @@ class TestCLIStatus:
         result = runner.invoke(app, ["status"])
 
         assert result.exit_code == 0
-        assert "Authenticated" in result.stdout or "authenticated" in result.stdout.lower()
+        assert (
+            "Authenticated" in result.stdout or "authenticated" in result.stdout.lower()
+        )
 
 
 @pytest.mark.unit
@@ -146,10 +160,16 @@ class TestCLIAuth:
             result = runner.invoke(app, ["auth", "login"])
 
         assert result.exit_code == 0
-        assert "Successfully authenticated" in result.stdout or "login" in result.stdout.lower()
+        assert (
+            "Successfully authenticated" in result.stdout
+            or "login" in result.stdout.lower()
+        )
 
     def test_auth_status_not_authenticated(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_keyring: dict[str, str]
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_keyring: dict[str, str],
     ):
         """Test auth status when not authenticated.
 
@@ -163,10 +183,16 @@ class TestCLIAuth:
         result = runner.invoke(app, ["auth", "status"])
 
         assert result.exit_code == 0
-        assert "Not authenticated" in result.stdout or "not logged in" in result.stdout.lower()
+        assert (
+            "Not authenticated" in result.stdout
+            or "not logged in" in result.stdout.lower()
+        )
 
     def test_auth_status_authenticated(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_keyring: dict[str, str]
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_keyring: dict[str, str],
     ):
         """Test auth status when authenticated.
 
@@ -187,7 +213,10 @@ class TestCLIAuth:
         assert "Authenticated" in result.stdout or "logged in" in result.stdout.lower()
 
     def test_auth_logout(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_keyring: dict[str, str]
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_keyring: dict[str, str],
     ):
         """Test auth logout command.
 
@@ -205,7 +234,10 @@ class TestCLIAuth:
         result = runner.invoke(app, ["auth", "logout"])
 
         assert result.exit_code == 0
-        assert "Successfully logged out" in result.stdout or "logout" in result.stdout.lower()
+        assert (
+            "Successfully logged out" in result.stdout
+            or "logout" in result.stdout.lower()
+        )
 
         # Verify tokens cleared
         assert "claude-bedrock-cursor:access_token" not in mock_keyring
@@ -236,7 +268,9 @@ class TestCLIAuth:
             result = runner.invoke(app, ["auth", "refresh"])
 
         assert result.exit_code == 0
-        assert "refreshed" in result.stdout.lower() or "success" in result.stdout.lower()
+        assert (
+            "refreshed" in result.stdout.lower() or "success" in result.stdout.lower()
+        )
 
 
 @pytest.mark.unit
@@ -244,7 +278,10 @@ class TestCLIAWS:
     """Test suite for 'claude-bedrock aws' commands."""
 
     def test_aws_setup(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_subprocess_run: MagicMock
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_subprocess_run: MagicMock,
     ):
         """Test aws setup command.
 
@@ -264,7 +301,10 @@ class TestCLIAWS:
         assert result.exit_code == 0
 
     def test_aws_validate(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_boto3_client: MagicMock
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_boto3_client: MagicMock,
     ):
         """Test aws validate command.
 
@@ -288,7 +328,10 @@ class TestCLIModels:
     """Test suite for 'claude-bedrock models' commands."""
 
     def test_models_list(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_boto3_client: MagicMock
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_boto3_client: MagicMock,
     ):
         """Test models list command.
 
@@ -305,7 +348,10 @@ class TestCLIModels:
         # Mock list models response
         mock_boto3_client.list_foundation_models.return_value = {
             "modelSummaries": [
-                {"modelId": "anthropic.claude-sonnet-4-20250514-v1:0", "modelName": "Claude Sonnet 4"}
+                {
+                    "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+                    "modelName": "Claude Sonnet 4",
+                }
             ]
         }
 
@@ -316,7 +362,10 @@ class TestCLIModels:
 
     @pytest.mark.asyncio
     async def test_models_test(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_boto3_client: MagicMock
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_boto3_client: MagicMock,
     ):
         """Test models test command.
 

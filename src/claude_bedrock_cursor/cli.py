@@ -2,7 +2,6 @@
 
 import asyncio
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -86,7 +85,11 @@ def status() -> None:
 
     # Check authentication
     oauth = OAuthManager()
-    auth_status = "✓ Authenticated" if asyncio.run(oauth.is_authenticated()) else "✗ Not authenticated"
+    auth_status = (
+        "✓ Authenticated"
+        if asyncio.run(oauth.is_authenticated())
+        else "✗ Not authenticated"
+    )
     table.add_row("Authentication", auth_status, "")
 
     # AWS configuration
@@ -105,7 +108,7 @@ def status() -> None:
 
 @app.command()
 def configure(
-    config_file: Optional[Path] = typer.Option(
+    config_file: Path | None = typer.Option(
         None,
         "--config",
         "-c",
@@ -217,6 +220,7 @@ def auth_status() -> None:
     Example:
         $ claude-bedrock auth status
     """
+
     async def check_status():
         oauth = OAuthManager()
         is_auth = await oauth.is_authenticated()

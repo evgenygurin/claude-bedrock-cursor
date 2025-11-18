@@ -3,7 +3,6 @@
 import pytest
 
 from claude_bedrock_cursor.auth.storage import SecureTokenStorage
-from claude_bedrock_cursor.utils.errors import AuthenticationError
 
 
 @pytest.mark.unit

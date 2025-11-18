@@ -1,5 +1,6 @@
 """End-to-end tests for complete workflows."""
 
+from datetime import UTC
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -199,7 +200,7 @@ class TestAuthenticationWorkflow:
             mock_keyring: Mocked keyring fixture
             mock_httpx_client: Mocked httpx client fixture
         """
-        from datetime import datetime, timedelta, timezone
+        from datetime import datetime, timedelta
 
         monkeypatch.setenv("HOME", str(tmp_path))
 
@@ -208,8 +209,12 @@ class TestAuthenticationWorkflow:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "valid_refresh"
 
         # Set expiry to past
-        past_timestamp = int((datetime.now(timezone.utc) - timedelta(minutes=5)).timestamp())
-        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(past_timestamp)
+        past_timestamp = int(
+            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
+        )
+        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
+            past_timestamp
+        )
 
         # Setup auto-refresh
         mock_httpx_client.post.return_value.json.return_value = {
@@ -263,7 +268,10 @@ class TestBedrockQueryWorkflow:
 
     @pytest.mark.asyncio
     async def test_query_with_prompt_caching(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mock_boto3_client: MagicMock
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        mock_boto3_client: MagicMock,
     ):
         """Test query workflow with prompt caching enabled.
 
@@ -407,7 +415,7 @@ class TestErrorRecoveryWorkflow:
             mock_httpx_client: Mocked httpx client fixture
             mock_boto3_client: Mocked boto3 client fixture
         """
-        from datetime import datetime, timedelta, timezone
+        from datetime import datetime, timedelta
 
         monkeypatch.setenv("HOME", str(tmp_path))
 
@@ -415,8 +423,12 @@ class TestErrorRecoveryWorkflow:
         mock_keyring["claude-bedrock-cursor:access_token"] = "expired_token"
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "valid_refresh"
 
-        past_timestamp = int((datetime.now(timezone.utc) - timedelta(minutes=5)).timestamp())
-        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(past_timestamp)
+        past_timestamp = int(
+            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
+        )
+        mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
+            past_timestamp
+        )
 
         # Setup auto-refresh
         mock_httpx_client.post.return_value.json.return_value = {

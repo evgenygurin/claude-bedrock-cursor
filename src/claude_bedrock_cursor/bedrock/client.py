@@ -3,7 +3,7 @@
 import asyncio
 import json
 import time
-from typing import AsyncIterator, Optional
+from collections.abc import AsyncIterator
 
 import boto3
 from botocore.exceptions import ClientError
@@ -11,9 +11,9 @@ from botocore.exceptions import ClientError
 from claude_bedrock_cursor.config import get_config
 from claude_bedrock_cursor.utils.errors import (
     BedrockConnectionError,
+    BedrockError,
     BedrockThrottlingError,
     BedrockValidationError,
-    BedrockError,
 )
 
 
@@ -35,8 +35,8 @@ class BedrockClient:
 
     def __init__(
         self,
-        region: Optional[str] = None,
-        model_id: Optional[str] = None,
+        region: str | None = None,
+        model_id: str | None = None,
     ) -> None:
         """Initialize Bedrock client.
 
@@ -66,7 +66,7 @@ class BedrockClient:
     async def invoke_streaming(
         self,
         prompt: str,
-        system_context: Optional[str] = None,
+        system_context: str | None = None,
         max_retries: int = 3,
     ) -> AsyncIterator[str]:
         """Stream responses from Bedrock with automatic retry.
@@ -127,9 +127,7 @@ class BedrockClient:
                     ) from e
 
                 elif error_code == "ResourceNotFoundException":
-                    raise BedrockError(
-                        f"Model not found: {self.model_id}"
-                    ) from e
+                    raise BedrockError(f"Model not found: {self.model_id}") from e
 
                 else:
                     raise BedrockError(
@@ -142,7 +140,7 @@ class BedrockClient:
     async def invoke(
         self,
         prompt: str,
-        system_context: Optional[str] = None,
+        system_context: str | None = None,
     ) -> str:
         """Invoke model and return complete response.
 
@@ -167,7 +165,7 @@ class BedrockClient:
     def _build_request_body(
         self,
         prompt: str,
-        system_context: Optional[str] = None,
+        system_context: str | None = None,
     ) -> dict:
         """Build Bedrock API request body with caching.
 
@@ -267,9 +265,7 @@ class BedrockClient:
             return "test" in response.lower()
 
         except Exception as e:
-            raise BedrockConnectionError(
-                f"Connection validation failed: {e}"
-            ) from e
+            raise BedrockConnectionError(f"Connection validation failed: {e}") from e
 
     async def list_available_models(self) -> list[dict]:
         """List available Claude models in Bedrock.
@@ -327,7 +323,7 @@ class BedrockClientWithMetrics(BedrockClient):
     async def invoke_streaming(
         self,
         prompt: str,
-        system_context: Optional[str] = None,
+        system_context: str | None = None,
         max_retries: int = 3,
     ) -> AsyncIterator[str]:
         """Stream with metrics tracking."""

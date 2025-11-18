@@ -1,6 +1,5 @@
 """Secure token storage using system keyring."""
 
-from typing import Optional
 
 import keyring
 import keyring.errors
@@ -44,11 +43,9 @@ class SecureTokenStorage:
         try:
             keyring.set_password(self.SERVICE_NAME, token_type, token)
         except keyring.errors.KeyringError as e:
-            raise AuthenticationError(
-                f"Failed to store token in keyring: {e}"
-            ) from e
+            raise AuthenticationError(f"Failed to store token in keyring: {e}") from e
 
-    def get_token(self, token_type: str) -> Optional[str]:
+    def get_token(self, token_type: str) -> str | None:
         """Retrieve token from keyring.
 
         Args:

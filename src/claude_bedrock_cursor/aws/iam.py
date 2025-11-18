@@ -1,7 +1,6 @@
 """IAM policy management for AWS Bedrock."""
 
 import json
-from typing import Optional
 
 
 class IAMPolicyManager:
@@ -17,8 +16,8 @@ class IAMPolicyManager:
 
     def generate_least_privilege_policy(
         self,
-        regions: Optional[list[str]] = None,
-        models: Optional[list[str]] = None,
+        regions: list[str] | None = None,
+        models: list[str] | None = None,
     ) -> dict:
         """Generate minimal IAM policy for Bedrock access.
 
@@ -56,9 +55,7 @@ class IAMPolicyManager:
                         f"arn:aws:bedrock:*::foundation-model/{model}"
                         for model in models
                     ],
-                    "Condition": {
-                        "StringEquals": {"aws:RequestedRegion": regions}
-                    },
+                    "Condition": {"StringEquals": {"aws:RequestedRegion": regions}},
                 },
                 {
                     "Sid": "BedrockInferenceProfiles",

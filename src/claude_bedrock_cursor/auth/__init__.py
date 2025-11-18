@@ -5,7 +5,7 @@ from claude_bedrock_cursor.auth.storage import SecureTokenStorage
 
 __all__ = [
     "OAuthManager",
-    "TokenPair",
     "SecureTokenStorage",
+    "TokenPair",
     "requires_auth",
 ]

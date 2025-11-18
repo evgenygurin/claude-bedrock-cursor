@@ -1,8 +1,7 @@
 """Configuration management with Pydantic validation."""
 
-import os
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
 
 try:
     import tomllib  # Python 3.11+
@@ -59,7 +58,7 @@ class Config(BaseSettings):
         default="us-east-1",
         description="AWS region for Bedrock",
     )
-    aws_profile: Optional[str] = Field(
+    aws_profile: str | None = Field(
         default=None,
         description="AWS CLI profile name",
     )
@@ -101,7 +100,7 @@ class Config(BaseSettings):
         default="both",
         description="Cursor integration mode",
     )
-    cursor_path: Optional[Path] = Field(
+    cursor_path: Path | None = Field(
         default=None,
         description="Path to Cursor application",
     )
@@ -129,7 +128,7 @@ class Config(BaseSettings):
 
     @field_validator("cursor_path")
     @classmethod
-    def validate_cursor_path(cls, v: Optional[Path]) -> Optional[Path]:
+    def validate_cursor_path(cls, v: Path | None) -> Path | None:
         """Validate Cursor path exists if provided.
 
         Args:
@@ -225,7 +224,7 @@ class Config(BaseSettings):
 
 
 # Global configuration instance
-_config: Optional[Config] = None
+_config: Config | None = None
 
 
 def get_config() -> Config:

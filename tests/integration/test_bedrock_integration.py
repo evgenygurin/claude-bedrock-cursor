@@ -2,14 +2,17 @@
 
 import asyncio
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 from moto import mock_aws
 
 from claude_bedrock_cursor.bedrock.client import BedrockClient, BedrockClientWithMetrics
 from claude_bedrock_cursor.config import Config
-from claude_bedrock_cursor.utils.errors import BedrockThrottlingError, BedrockValidationError
+from claude_bedrock_cursor.utils.errors import (
+    BedrockThrottlingError,
+    BedrockValidationError,
+)
 
 
 @pytest.mark.integration
@@ -18,7 +21,9 @@ class TestBedrockIntegration:
 
     @pytest.mark.asyncio
     @mock_aws
-    async def test_full_streaming_workflow(self, sample_config: Config, mock_boto3_client: MagicMock):
+    async def test_full_streaming_workflow(
+        self, sample_config: Config, mock_boto3_client: MagicMock
+    ):
         """Test complete streaming workflow with AWS.
 
         Args:
@@ -50,11 +55,15 @@ class TestBedrockIntegration:
         sample_config.enable_prompt_caching = True
         client = BedrockClient(config=sample_config)
 
-        system_context = "You are a helpful AI assistant specialized in Python programming."
+        system_context = (
+            "You are a helpful AI assistant specialized in Python programming."
+        )
 
         # Make request with system context
         chunks = []
-        async for chunk in client.invoke_streaming("Explain decorators", system_context=system_context):
+        async for chunk in client.invoke_streaming(
+            "Explain decorators", system_context=system_context
+        ):
             chunks.append(chunk)
 
         # Verify cache_control was sent
@@ -66,7 +75,9 @@ class TestBedrockIntegration:
 
     @pytest.mark.asyncio
     @mock_aws
-    async def test_concurrent_requests(self, sample_config: Config, mock_boto3_client: MagicMock):
+    async def test_concurrent_requests(
+        self, sample_config: Config, mock_boto3_client: MagicMock
+    ):
         """Test handling multiple concurrent requests.
 
         Args:
@@ -97,7 +108,9 @@ class TestBedrockIntegration:
 
     @pytest.mark.asyncio
     @mock_aws
-    async def test_retry_on_throttling(self, sample_config: Config, mock_boto3_client: MagicMock):
+    async def test_retry_on_throttling(
+        self, sample_config: Config, mock_boto3_client: MagicMock
+    ):
         """Test automatic retry on throttling errors.
 
         Args:
@@ -170,7 +183,8 @@ class TestBedrockIntegration:
         client = BedrockClient(config=sample_config)
 
         # Create large system context (simulating project documentation)
-        large_context = """
+        large_context = (
+            """
         You are an AI assistant with deep knowledge of Python.
 
         Project Architecture:
@@ -186,7 +200,9 @@ class TestBedrockIntegration:
         - Comprehensive docstrings
         - 80%+ test coverage
 
-        """ * 20  # Repeat to ensure >1024 tokens
+        """
+            * 20
+        )  # Repeat to ensure >1024 tokens
 
         chunks = []
         async for chunk in client.invoke_streaming(
@@ -253,7 +269,9 @@ class TestBedrockErrorHandling:
         from botocore.exceptions import ClientError
 
         mock_boto3_client.invoke_model_with_response_stream.side_effect = ClientError(
-            error_response={"Error": {"Code": "ValidationException", "Message": "Invalid input"}},
+            error_response={
+                "Error": {"Code": "ValidationException", "Message": "Invalid input"}
+            },
             operation_name="InvokeModel",
         )
 
@@ -300,7 +318,9 @@ class TestBedrockErrorHandling:
             mock_boto3_client: Mocked boto3 client fixture
         """
         # Mock empty stream
-        mock_boto3_client.invoke_model_with_response_stream.return_value = {"body": iter([])}
+        mock_boto3_client.invoke_model_with_response_stream.return_value = {
+            "body": iter([])
+        }
 
         client = BedrockClient(config=sample_config)
 
@@ -338,7 +358,9 @@ class TestBedrockClientConfiguration:
 
     @pytest.mark.asyncio
     @mock_aws
-    async def test_different_models(self, sample_config: Config, mock_boto3_client: MagicMock):
+    async def test_different_models(
+        self, sample_config: Config, mock_boto3_client: MagicMock
+    ):
         """Test client works with different Claude models.
 
         Args:
@@ -364,7 +386,9 @@ class TestBedrockClientConfiguration:
 
     @pytest.mark.asyncio
     @mock_aws
-    async def test_streaming_disabled(self, sample_config: Config, mock_boto3_client: MagicMock):
+    async def test_streaming_disabled(
+        self, sample_config: Config, mock_boto3_client: MagicMock
+    ):
         """Test behavior when streaming is disabled.
 
         Args:
