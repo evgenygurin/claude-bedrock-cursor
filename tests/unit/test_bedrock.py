@@ -170,7 +170,9 @@ class TestBedrockClient:
             sample_config: Sample config fixture
         """
         validation_error = ClientError(
-            error_response={"Error": {"Code": "ValidationException"}},
+            error_response={
+                "Error": {"Code": "ValidationException", "Message": "Invalid model parameters"}
+            },
             operation_name="InvokeModel",
         )
         mock_boto3_client.invoke_model_with_response_stream.side_effect = (
@@ -194,7 +196,9 @@ class TestBedrockClient:
             sample_config: Sample config fixture
         """
         generic_error = ClientError(
-            error_response={"Error": {"Code": "InternalServerError"}},
+            error_response={
+                "Error": {"Code": "InternalServerError", "Message": "Internal server error"}
+            },
             operation_name="InvokeModel",
         )
         mock_boto3_client.invoke_model_with_response_stream.side_effect = generic_error
