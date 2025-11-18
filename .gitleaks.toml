@@ -56,6 +56,7 @@ paths = [
     '''\.pyc$''',             # Compiled Python files
     '''htmlcov/.*''',         # Coverage HTML reports
     '''^tests/.*''',          # All test directory files
+    '''oauth\.py$''',         # OAuth module with legitimate token variable names
 ]
 
 regexes = [
@@ -63,4 +64,6 @@ regexes = [
     '''your-.*-here''',       # Placeholder patterns
     '''test[-_]token''',      # Test tokens
     '''mock[-_].*''',         # Mock data
+    '''oauth_token''',        # Variable names for OAuth tokens (not actual secrets)
+    '''access_token: str''',  # Type annotations for token parameters
 ]
