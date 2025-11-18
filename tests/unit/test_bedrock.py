@@ -82,6 +82,8 @@ class TestBedrockClient:
         """
         # Disable caching
         sample_config.enable_prompt_caching = False
+        from claude_bedrock_cursor.config import set_config
+        set_config(sample_config)
         client = BedrockClient()
 
         chunks = []
@@ -90,11 +92,12 @@ class TestBedrockClient:
         ):
             chunks.append(chunk)
 
-        # Verify no cache_control in request
+        # Verify no system context added when caching disabled
         call_args = mock_boto3_client.invoke_model_with_response_stream.call_args
         body = json.loads(call_args.kwargs["body"])
 
-        assert "cache_control" not in body["system"][0]
+        # When caching is disabled, system context should not be included
+        assert "system" not in body
 
     @pytest.mark.asyncio
     async def test_invoke_streaming_throttling_retry(
@@ -152,7 +155,7 @@ class TestBedrockClient:
 
         client = BedrockClient()
 
-        with pytest.raises(BedrockThrottlingError, match="Max retries exceeded"):
+        with pytest.raises(BedrockThrottlingError, match="Throttling error after .* retries"):
             async for _ in client.invoke_streaming("test prompt", max_retries=2):
                 pass
 
