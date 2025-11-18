@@ -83,6 +83,7 @@ class TestBedrockClient:
         # Disable caching
         sample_config.enable_prompt_caching = False
         from claude_bedrock_cursor.config import set_config
+
         set_config(sample_config)
         client = BedrockClient()
 
@@ -155,7 +156,9 @@ class TestBedrockClient:
 
         client = BedrockClient()
 
-        with pytest.raises(BedrockThrottlingError, match=r"Throttling error after .* retries"):
+        with pytest.raises(
+            BedrockThrottlingError, match=r"Throttling error after .* retries"
+        ):
             async for _ in client.invoke_streaming("test prompt", max_retries=2):
                 pass
 
@@ -171,7 +174,10 @@ class TestBedrockClient:
         """
         validation_error = ClientError(
             error_response={
-                "Error": {"Code": "ValidationException", "Message": "Invalid model parameters"}
+                "Error": {
+                    "Code": "ValidationException",
+                    "Message": "Invalid model parameters",
+                }
             },
             operation_name="InvokeModel",
         )
@@ -197,7 +203,10 @@ class TestBedrockClient:
         """
         generic_error = ClientError(
             error_response={
-                "Error": {"Code": "InternalServerError", "Message": "Internal server error"}
+                "Error": {
+                    "Code": "InternalServerError",
+                    "Message": "Internal server error",
+                }
             },
             operation_name="InvokeModel",
         )
@@ -348,7 +357,10 @@ class TestBedrockClientWithMetrics:
         """
         error = ClientError(
             error_response={
-                "Error": {"Code": "ValidationException", "Message": "Invalid parameters"}
+                "Error": {
+                    "Code": "ValidationException",
+                    "Message": "Invalid parameters",
+                }
             },
             operation_name="InvokeModel",
         )
