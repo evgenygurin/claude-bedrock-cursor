@@ -32,15 +32,20 @@ format:  ## Format code with ruff
 
 quality:  ## Run all quality checks
 	@echo "🔍 Running quality checks..."
+	@make format
 	@make lint
 	@make test
 	@echo "✅ All quality checks passed!"
 
-security:  ## Run security scans
-	@echo "🔐 Running security scans..."
-	uv run pip-audit
-	uv run bandit -r src/
-	@echo "✅ Security scans complete!"
+security:  ## Run comprehensive security scans
+	@./scripts/security_scan.sh
+
+pre-commit-install:  ## Install pre-commit hooks
+	uv run pre-commit install
+	uv run pre-commit install --hook-type commit-msg
+
+pre-commit-run:  ## Run pre-commit hooks manually
+	uv run pre-commit run --all-files
 
 clean:  ## Clean build artifacts and caches
 	rm -rf build/

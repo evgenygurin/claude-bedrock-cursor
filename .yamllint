@@ -1,0 +1,32 @@
+---
+# YAML linting configuration
+
+extends: default
+
+rules:
+  # Line length is flexible for readability
+  line-length:
+    max: 120
+    level: warning
+
+  # Allow multiple spaces for alignment
+  key-duplicates: enable
+  trailing-spaces: enable
+  new-line-at-end-of-file: enable
+
+  # Indentation
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  # Comments
+  comments:
+    min-spaces-from-content: 2
+
+  # Document markers
+  document-start: disable
+  document-end: disable
+
+  # Truthy values
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no']

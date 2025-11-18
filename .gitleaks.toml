@@ -1,0 +1,62 @@
+# Gitleaks configuration for secret detection
+
+title = "Claude Bedrock Cursor - Secret Detection"
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key"
+regex = '''(?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'''
+tags = ["key", "AWS"]
+
+[[rules]]
+id = "aws-secret-key"
+description = "AWS Secret Key"
+regex = '''(?i)aws(.{0,20})?(?-i)['\"][0-9a-zA-Z\/+]{40}['\"]'''
+tags = ["key", "AWS"]
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)(api|access)[-_]?key['"\s]*[=:]['"\s]*[0-9a-zA-Z\-_]{20,}'''
+tags = ["key", "API"]
+
+[[rules]]
+id = "private-key"
+description = "Private Key"
+regex = '''-----BEGIN (RSA|DSA|EC|OPENSSH|PGP) PRIVATE KEY-----'''
+tags = ["key", "private"]
+
+[[rules]]
+id = "oauth-token"
+description = "OAuth Access Token"
+regex = '''(?i)(oauth|access)[-_]?token['"\s]*[=:]['"\s]*[0-9a-zA-Z\-._~+/]+=*'''
+tags = ["key", "OAuth"]
+
+[[rules]]
+id = "jwt-token"
+description = "JWT Token"
+regex = '''eyJ[A-Za-z0-9-_=]+\.eyJ[A-Za-z0-9-_=]+\.[A-Za-z0-9-_.+/=]*'''
+tags = ["key", "JWT"]
+
+[[rules]]
+id = "env-file-secrets"
+description = "Secrets in .env files"
+regex = '''(?i)(secret|password|token|key)=['"][^'"]+['"]'''
+paths = ['''^\.env$''', '''^\.env\..*''']
+tags = ["env", "secret"]
+
+[allowlist]
+description = "Allowlist for false positives"
+paths = [
+    '''\.md$''',              # Markdown documentation
+    '''\.txt$''',             # Text files
+    '''test_.*\.py$''',       # Test files
+    '''conftest\.py$''',      # Test configuration
+]
+
+regexes = [
+    '''EXAMPLE_KEY''',        # Example placeholders
+    '''your-.*-here''',       # Placeholder patterns
+    '''test[-_]token''',      # Test tokens
+    '''mock[-_].*''',         # Mock data
+]
