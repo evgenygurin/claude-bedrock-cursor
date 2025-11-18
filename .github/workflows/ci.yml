@@ -130,14 +130,14 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Install build dependencies
-        run: uv pip install build hatchling
+        run: uv pip install --system build hatchling
 
       - name: Build package
         run: python -m build
 
       - name: Check package metadata
         run: |
-          uv pip install twine
+          uv pip install --system twine
           twine check dist/*
 
       - name: Upload build artifacts
