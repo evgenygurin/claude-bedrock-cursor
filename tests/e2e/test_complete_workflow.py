@@ -209,9 +209,7 @@ class TestAuthenticationWorkflow:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "valid_refresh"
 
         # Set expiry to past
-        past_timestamp = int(
-            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
-        )
+        past_timestamp = int((datetime.now(UTC) - timedelta(minutes=5)).timestamp())
         mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
             past_timestamp
         )
@@ -423,9 +421,7 @@ class TestErrorRecoveryWorkflow:
         mock_keyring["claude-bedrock-cursor:access_token"] = "expired_token"
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "valid_refresh"
 
-        past_timestamp = int(
-            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
-        )
+        past_timestamp = int((datetime.now(UTC) - timedelta(minutes=5)).timestamp())
         mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
             past_timestamp
         )

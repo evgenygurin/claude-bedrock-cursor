@@ -2,7 +2,11 @@
 
 import subprocess
 import time
+from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
+from functools import wraps
+from typing import Any
 
 import httpx
 
@@ -190,15 +194,13 @@ class OAuthManager:
 
         # Revoke token on server
         if refresh_token:
-            try:
+            with suppress(httpx.HTTPError):
                 await self.client.post(
                     self.REVOKE_ENDPOINT,
                     json={"token": refresh_token},
                     timeout=5.0,
                 )
-            except httpx.HTTPError:
-                # Server revocation failed, still clear local storage
-                pass
+            # Server revocation failed, still clear local storage
 
         # Clear local token storage
         self.storage.clear_all()
@@ -306,12 +308,6 @@ class OAuthManager:
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """Async context manager exit."""
         await self.client.aclose()
-
-
-# Decorator for automatic token refresh
-from collections.abc import Callable
-from functools import wraps
-from typing import Any
 
 
 def requires_auth(func: Callable) -> Callable:

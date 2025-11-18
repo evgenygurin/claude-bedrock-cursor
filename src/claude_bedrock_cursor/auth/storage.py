@@ -1,6 +1,5 @@
 """Secure token storage using system keyring."""
 
-
 import keyring
 import keyring.errors
 

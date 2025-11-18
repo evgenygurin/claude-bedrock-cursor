@@ -142,11 +142,11 @@ class TestOAuthManager:
 
         manager = OAuthManager()
 
-        with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(
-                AuthenticationError, match="Failed to exchange OAuth token"
-            ):
-                await manager._exchange_oauth_token("invalid_oauth_token")
+        with (
+            patch("httpx.AsyncClient", return_value=mock_httpx_client),
+            pytest.raises(AuthenticationError, match="Failed to exchange OAuth token"),
+        ):
+            await manager._exchange_oauth_token("invalid_oauth_token")
 
     @pytest.mark.asyncio
     async def test_login_flow(
@@ -238,11 +238,11 @@ class TestOAuthManager:
 
         manager = OAuthManager()
 
-        with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(
-                TokenRefreshError, match="Failed to refresh access token"
-            ):
-                await manager.refresh_access_token()
+        with (
+            patch("httpx.AsyncClient", return_value=mock_httpx_client),
+            pytest.raises(TokenRefreshError, match="Failed to refresh access token"),
+        ):
+            await manager.refresh_access_token()
 
     @pytest.mark.asyncio
     async def test_logout(self, mock_keyring: dict[str, str]):
@@ -295,9 +295,7 @@ class TestOAuthManager:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "test_refresh"
 
         # Store expiry timestamp (5 minutes from now)
-        future_timestamp = int(
-            (datetime.now(UTC) + timedelta(minutes=5)).timestamp()
-        )
+        future_timestamp = int((datetime.now(UTC) + timedelta(minutes=5)).timestamp())
         mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
             future_timestamp
         )
@@ -326,9 +324,7 @@ class TestOAuthManager:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "test_refresh"
 
         # Store past expiry timestamp
-        past_timestamp = int(
-            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
-        )
+        past_timestamp = int((datetime.now(UTC) - timedelta(minutes=5)).timestamp())
         mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
             past_timestamp
         )

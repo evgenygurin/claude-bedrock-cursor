@@ -22,6 +22,14 @@ app = typer.Typer(
 # Rich console for beautiful output
 console = Console()
 
+# Default options
+CONFIG_FILE_OPTION = typer.Option(
+    None,
+    "--config",
+    "-c",
+    help="Path to configuration file",
+)
+
 # Subcommands
 auth_app = typer.Typer(help="Authentication commands")
 aws_app = typer.Typer(help="AWS Bedrock commands")
@@ -108,12 +116,7 @@ def status() -> None:
 
 @app.command()
 def configure(
-    config_file: Path | None = typer.Option(
-        None,
-        "--config",
-        "-c",
-        help="Path to configuration file",
-    ),
+    config_file: Path | None = CONFIG_FILE_OPTION,
 ) -> None:
     """Configure claude-bedrock settings.
 
@@ -129,7 +132,7 @@ def configure(
             console.print(f"[green]✓[/green] Loaded config from {config_file}")
         except Exception as e:
             console.print(f"[red]✗[/red] Failed to load config: {e}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
     else:
         console.print("[yellow]Using environment variables and defaults[/yellow]")
         config = get_config()
@@ -169,7 +172,7 @@ def auth_login() -> None:
             console.print("\nTokens stored securely in system keyring.")
         except Exception as e:
             console.print(f"[red]✗[/red] Login failed: {e}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
     asyncio.run(login())
 
@@ -208,7 +211,7 @@ def auth_refresh() -> None:
             console.print("[green]✓[/green] Token refreshed successfully")
         except Exception as e:
             console.print(f"[red]✗[/red] Refresh failed: {e}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
     asyncio.run(refresh())
 
@@ -275,7 +278,7 @@ def aws_validate() -> None:
 
         except Exception as e:
             console.print(f"[red]✗[/red] Validation failed: {e}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
     asyncio.run(validate())
 
@@ -309,7 +312,7 @@ def models_list() -> None:
 
         except Exception as e:
             console.print(f"[red]✗[/red] Failed to list models: {e}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
     asyncio.run(list_models())
 
@@ -344,7 +347,7 @@ def models_test(
 
         except Exception as e:
             console.print(f"\n[red]✗[/red] Test failed: {e}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
     asyncio.run(test_model())
 

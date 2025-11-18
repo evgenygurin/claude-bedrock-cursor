@@ -182,9 +182,7 @@ class TestOAuthFlowIntegration:
         mock_keyring["claude-bedrock-cursor:refresh_token"] = "valid_refresh"
 
         # Set expiry to past
-        past_timestamp = int(
-            (datetime.now(UTC) - timedelta(minutes=5)).timestamp()
-        )
+        past_timestamp = int((datetime.now(UTC) - timedelta(minutes=5)).timestamp())
         mock_keyring["claude-bedrock-cursor:access_token_expires_at"] = str(
             past_timestamp
         )
@@ -246,11 +244,11 @@ class TestOAuthErrorScenarios:
 
         manager = OAuthManager()
 
-        with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(
-                AuthenticationError, match="Failed to exchange OAuth token"
-            ):
-                await manager._exchange_oauth_token("invalid_token")
+        with (
+            patch("httpx.AsyncClient", return_value=mock_httpx_client),
+            pytest.raises(AuthenticationError, match="Failed to exchange OAuth token"),
+        ):
+            await manager._exchange_oauth_token("invalid_token")
 
     @pytest.mark.asyncio
     async def test_refresh_without_login(self, mock_keyring: dict[str, str]):
@@ -285,11 +283,11 @@ class TestOAuthErrorScenarios:
 
         manager = OAuthManager()
 
-        with patch("httpx.AsyncClient", return_value=mock_httpx_client):
-            with pytest.raises(
-                TokenRefreshError, match="Failed to refresh access token"
-            ):
-                await manager.refresh_access_token()
+        with (
+            patch("httpx.AsyncClient", return_value=mock_httpx_client),
+            pytest.raises(TokenRefreshError, match="Failed to refresh access token"),
+        ):
+            await manager.refresh_access_token()
 
     @pytest.mark.asyncio
     async def test_concurrent_refresh_requests(
