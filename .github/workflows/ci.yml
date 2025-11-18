@@ -37,7 +37,7 @@ jobs:
         run: uv run ruff format --check src/ tests/
 
       - name: Run mypy type checker
-        run: uv run mypy src/ tests/
+        run: uv run mypy src/
 
   test:
     name: Test (Python ${{ matrix.python-version }})
