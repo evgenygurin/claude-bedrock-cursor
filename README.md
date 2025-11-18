@@ -32,7 +32,7 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/claude-bedrock-cursor.git
+git clone https://github.com/evgenygurin/claude-bedrock-cursor.git
 cd claude-bedrock-cursor
 
 # Install with uv (recommended)
@@ -41,6 +41,9 @@ uv sync
 
 # Or install with pip
 pip install -e .
+
+# Or install from PyPI (when published)
+pip install claude-bedrock-cursor
 ```
 
 ### Configuration

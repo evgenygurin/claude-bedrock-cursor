@@ -211,17 +211,19 @@ claude-bedrock status
 - [x] CHANGELOG обновлен
 - [x] RELEASE_SUMMARY создан
 - [x] Документация полная (8 гайдов)
-- [ ] GitHub репозиторий создан
-- [ ] Код отправлен на GitHub
-- [ ] GitHub Release создан
+- [x] GitHub репозиторий создан
+- [x] Код отправлен на GitHub
+- [x] GitHub Release создан
 - [ ] PyPI публикация (опционально)
 
 ## 📞 Поддержка
 
-После публикации на GitHub:
-- **Issues**: https://github.com/YOUR_USERNAME/claude-bedrock-cursor/issues
-- **Discussions**: https://github.com/YOUR_USERNAME/claude-bedrock-cursor/discussions
-- **Documentation**: https://github.com/YOUR_USERNAME/claude-bedrock-cursor/tree/main/docs
+Проект опубликован на GitHub:
+- **Repository**: https://github.com/evgenygurin/claude-bedrock-cursor
+- **Release**: https://github.com/evgenygurin/claude-bedrock-cursor/releases/tag/v1.0.0
+- **Issues**: https://github.com/evgenygurin/claude-bedrock-cursor/issues
+- **Discussions**: https://github.com/evgenygurin/claude-bedrock-cursor/discussions
+- **Documentation**: https://github.com/evgenygurin/claude-bedrock-cursor/tree/main/docs
 
 ## 🎉 Поздравления!
 
