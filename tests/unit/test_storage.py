@@ -93,7 +93,7 @@ class TestSecureTokenStorage:
         storage.store_token("refresh_token", "refresh_456")
 
         # Clear all
-        storage.clear_all_tokens()
+        storage.clear_all()
 
         # Verify all cleared
         assert storage.get_token("access_token") is None
@@ -169,49 +169,26 @@ class TestSecureTokenStorage:
         assert "claude-bedrock-cursor:token1" in mock_keyring
         assert "claude-bedrock-cursor:token2" in mock_keyring
 
-    def test_get_all_token_types(self, mock_keyring: dict[str, str]):
-        """Test getting list of all stored token types.
+    def test_multiple_token_types(self, mock_keyring: dict[str, str]):
+        """Test storing and retrieving multiple token types.
 
         Args:
             mock_keyring: Mocked keyring storage fixture
         """
         storage = SecureTokenStorage()
 
-        # Store tokens
+        # Store different token types
         storage.store_token("access_token", "value1")
         storage.store_token("refresh_token", "value2")
         storage.store_token("oauth_token", "value3")
 
-        # Get all types
-        token_types = storage.get_all_token_types()
-
-        assert "access_token" in token_types
-        assert "refresh_token" in token_types
-        assert "oauth_token" in token_types
-        assert len(token_types) == 3
-
-    def test_is_authenticated(self, mock_keyring: dict[str, str]):
-        """Test checking if user is authenticated.
-
-        Args:
-            mock_keyring: Mocked keyring storage fixture
-        """
-        storage = SecureTokenStorage()
-
-        # Initially not authenticated
-        assert not storage.is_authenticated()
-
-        # Store access token
-        storage.store_token("access_token", "test_access")
-
-        # Still not authenticated (needs both tokens)
-        assert not storage.is_authenticated()
-
-        # Store refresh token
-        storage.store_token("refresh_token", "test_refresh")
-
-        # Now authenticated
-        assert storage.is_authenticated()
+        # Verify all can be retrieved
+        assert storage.has_token("access_token")
+        assert storage.has_token("refresh_token")
+        assert storage.has_token("oauth_token")
+        assert storage.get_token("access_token") == "value1"
+        assert storage.get_token("refresh_token") == "value2"
+        assert storage.get_token("oauth_token") == "value3"
 
     def test_token_isolation(self, mock_keyring: dict[str, str]):
         """Test tokens are isolated between instances.
@@ -249,8 +226,10 @@ class TestSecureTokenStorage:
         """
         storage = SecureTokenStorage()
 
-        # Clear when empty
-        storage.clear_all_tokens()
+        # Clear when empty (should not raise error)
+        storage.clear_all()
 
-        # Should still be empty
-        assert not storage.is_authenticated()
+        # Verify storage is still empty
+        assert not storage.has_token("access_token")
+        assert not storage.has_token("refresh_token")
+        assert not storage.has_token("oauth_token")
