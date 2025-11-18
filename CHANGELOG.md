@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Interactive setup wizard
 - Shell completion scripts
 
-## [1.0.0] - TBD
+## [1.0.0] - 2025-11-18
 
 ### Added
 
@@ -106,6 +106,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Async/await throughout
 - Reused boto3 clients
 - Efficient token management
+
+### Known Issues
+
+- **Test Coverage**: Currently at 23% (target: 80%)
+  - 37 tests passing, 89 tests failing
+  - Implementation of some modules incomplete (cli.py, aws/iam.py, cursor/)
+  - Test infrastructure is complete and working
+  - Planned for v1.1.0 release
+
+- **Cursor Integration**: Partially implemented
+  - Rules and configuration files complete
+  - Runtime integration pending
+  - Documented in comprehensive guides
+
+- **Safety Tool**: Incompatibility with current Typer version
+  - All other security scans (bandit, gitleaks, pip-audit) passing
+  - No known vulnerabilities in dependencies
 
 ## [0.1.0] - Initial Development
 

@@ -52,6 +52,10 @@ paths = [
     '''\.txt$''',             # Text files
     '''test_.*\.py$''',       # Test files
     '''conftest\.py$''',      # Test configuration
+    '''__pycache__/.*''',     # Python cache files
+    '''\.pyc$''',             # Compiled Python files
+    '''htmlcov/.*''',         # Coverage HTML reports
+    '''^tests/.*''',          # All test directory files
 ]
 
 regexes = [
