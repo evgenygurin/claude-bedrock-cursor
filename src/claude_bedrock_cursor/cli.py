@@ -164,7 +164,7 @@ def auth_login() -> None:
     console.print("[bold]🔐 OAuth Login[/bold]\n")
     console.print("This will open Claude Code to generate an OAuth token.\n")
 
-    async def login():
+    async def login() -> None:
         oauth = OAuthManager()
         try:
             await oauth.login()
@@ -186,7 +186,7 @@ def auth_logout() -> None:
     """
     console.print("[bold]🔐 Logout[/bold]\n")
 
-    async def logout():
+    async def logout() -> None:
         oauth = OAuthManager()
         await oauth.logout()
         console.print("[green]✓[/green] Logged out successfully")
@@ -204,7 +204,7 @@ def auth_refresh() -> None:
     """
     console.print("[bold]🔄 Refreshing Token[/bold]\n")
 
-    async def refresh():
+    async def refresh() -> None:
         oauth = OAuthManager()
         try:
             await oauth.refresh_access_token()
@@ -224,7 +224,7 @@ def auth_status() -> None:
         $ claude-bedrock auth status
     """
 
-    async def check_status():
+    async def check_status() -> None:
         oauth = OAuthManager()
         is_auth = await oauth.is_authenticated()
 
@@ -263,7 +263,7 @@ def aws_validate() -> None:
     """
     console.print("[bold]✓ Validating Bedrock Access[/bold]\n")
 
-    async def validate():
+    async def validate() -> None:
         try:
             client = BedrockClient()
             is_valid = await client.validate_connection()
@@ -293,7 +293,7 @@ def models_list() -> None:
     """
     console.print("[bold]📋 Available Models[/bold]\n")
 
-    async def list_models():
+    async def list_models() -> None:
         try:
             client = BedrockClient()
             models = await client.list_available_models()
@@ -335,7 +335,7 @@ def models_test(
     console.print("[bold]🧪 Testing Model[/bold]\n")
     console.print(f"Prompt: {prompt}\n")
 
-    async def test_model():
+    async def test_model() -> None:
         try:
             client = BedrockClient()
 

@@ -305,12 +305,12 @@ class OAuthManager:
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Async context manager exit."""
         await self.client.aclose()
 
 
-def requires_auth(func: Callable) -> Callable:
+def requires_auth(func: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator to ensure valid access token.
 
     Automatically refreshes expired tokens on 401 errors.

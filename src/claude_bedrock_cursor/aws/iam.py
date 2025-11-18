@@ -1,6 +1,7 @@
 """IAM policy management for AWS Bedrock."""
 
 import json
+from typing import Any
 
 
 class IAMPolicyManager:
@@ -18,7 +19,7 @@ class IAMPolicyManager:
         self,
         regions: list[str] | None = None,
         models: list[str] | None = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Generate minimal IAM policy for Bedrock access.
 
         Args:
@@ -66,7 +67,7 @@ class IAMPolicyManager:
             ],
         }
 
-    def to_json(self, policy: dict, indent: int = 2) -> str:
+    def to_json(self, policy: dict[str, Any], indent: int = 2) -> str:
         """Convert policy to JSON string.
 
         Args:
@@ -78,7 +79,7 @@ class IAMPolicyManager:
         """
         return json.dumps(policy, indent=indent)
 
-    def save_to_file(self, policy: dict, filepath: str) -> None:
+    def save_to_file(self, policy: dict[str, Any], filepath: str) -> None:
         """Save policy to file.
 
         Args:

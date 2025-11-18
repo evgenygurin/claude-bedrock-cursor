@@ -4,6 +4,7 @@ import asyncio
 import json
 import time
 from collections.abc import AsyncIterator
+from typing import Any
 
 import boto3
 from botocore.exceptions import ClientError
@@ -166,7 +167,7 @@ class BedrockClient:
         self,
         prompt: str,
         system_context: str | None = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Build Bedrock API request body with caching.
 
         Args:
@@ -203,7 +204,7 @@ class BedrockClient:
 
         return body
 
-    async def _stream_response(self, response: dict) -> AsyncIterator[str]:
+    async def _stream_response(self, response: dict[str, Any]) -> AsyncIterator[str]:
         """Stream and parse Bedrock response.
 
         Args:
@@ -225,7 +226,7 @@ class BedrockClient:
                         if text:
                             yield text
 
-    def get_model_info(self) -> dict:
+    def get_model_info(self) -> dict[str, Any]:
         """Get information about the current model.
 
         Returns:
@@ -267,7 +268,7 @@ class BedrockClient:
         except Exception as e:
             raise BedrockConnectionError(f"Connection validation failed: {e}") from e
 
-    async def list_available_models(self) -> list[dict]:
+    async def list_available_models(self) -> list[dict[str, Any]]:
         """List available Claude models in Bedrock.
 
         Returns:
@@ -287,7 +288,9 @@ class BedrockClient:
                 byProvider="Anthropic",
             )
 
-            return response.get("modelSummaries", [])
+            model_summaries = response.get("modelSummaries", [])
+            # Convert TypedDict to regular dict for compatibility
+            return [dict(model) for model in model_summaries]
 
         except Exception as e:
             raise BedrockError(f"Failed to list models: {e}") from e
@@ -309,7 +312,7 @@ class BedrockClientWithMetrics(BedrockClient):
         >>> print(f"Tokens used: {metrics['total_tokens']}")
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize client with metrics tracking."""
         super().__init__(*args, **kwargs)
         self._metrics = {
@@ -349,7 +352,7 @@ class BedrockClientWithMetrics(BedrockClient):
         self._metrics["output_tokens"] += output_tokens
         self._metrics["total_latency"] += time.time() - start_time
 
-    def get_metrics(self) -> dict:
+    def get_metrics(self) -> dict[str, Any]:
         """Get current metrics.
 
         Returns:

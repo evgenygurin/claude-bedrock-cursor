@@ -1,12 +1,12 @@
 """Configuration management with Pydantic validation."""
 
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 try:
     import tomllib  # Python 3.11+
 except ImportError:
-    import tomli as tomllib  # Fallback for Python 3.10
+    import tomli as tomllib  # type: ignore[import-not-found,no-redef]  # Fallback for Python 3.10
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -190,7 +190,7 @@ class Config(BaseSettings):
 
         return cls(**data)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert config to dictionary.
 
         Returns:

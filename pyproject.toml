@@ -102,6 +102,10 @@ strict_equality = true
 module = ["moto.*", "boto3.*", "botocore.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
