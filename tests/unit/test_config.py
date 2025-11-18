@@ -6,7 +6,6 @@ import pytest
 from pydantic import ValidationError
 
 from claude_bedrock_cursor.config import Config
-from claude_bedrock_cursor.utils.errors import ConfigError
 
 
 @pytest.mark.unit
@@ -60,7 +59,8 @@ class TestConfig:
         invalid_toml = tmp_path / "invalid.toml"
         invalid_toml.write_text("this is not valid toml [[[")
 
-        with pytest.raises(Exception):  # tomllib.TOMLDecodeError or tomli.TOMLDecodeError
+        # tomllib.TOMLDecodeError or tomli.TOMLDecodeError depending on Python version
+        with pytest.raises((ValueError, Exception)):
             Config.from_toml(invalid_toml)
 
     def test_max_output_tokens_validation(self):
