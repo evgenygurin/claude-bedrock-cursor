@@ -155,7 +155,7 @@ class TestBedrockClient:
 
         client = BedrockClient()
 
-        with pytest.raises(BedrockThrottlingError, match="Throttling error after .* retries"):
+        with pytest.raises(BedrockThrottlingError, match=r"Throttling error after .* retries"):
             async for _ in client.invoke_streaming("test prompt", max_retries=2):
                 pass
 
